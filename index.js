@@ -22,11 +22,19 @@ app.use(logger)
 let readings = [
   {
     id: 1,
-    sensorName: 'Bedroom sensor',
+    sensorname: 'Bedroom sensor',
     temperature: 22.12,
     humidity: 25.23
   }
 ]
+
+// --------------------------------
+// ============ HELPER METHODS ============
+
+const generateId = () => {
+  const maxId = readings.length > 0 ? readings.map(n => n.id).sort((a, b) => a - b).reverse()[0] : 1
+  return maxId + 1
+}
 
 // --------------------------------
 // ============ ROUTES ============
@@ -52,6 +60,25 @@ app.get('/api/readings/:id', (request, response) => {
 app.post('/api/newreading/', (request, response) => {
   console.log('Received a new reading at', new Date())
   console.log('Message: ', request.body)
+
+  const body = request.body
+
+  if (body.temperature === undefined) {
+    return response.status(400).json({ error: 'temperature missing' })
+  }
+
+  const reading = {
+    sensorname: body.name,
+    temperature: body.temperature,
+    pressure: body.pressure,
+    humidity: body.humidity,
+    timestamp: new Date(),
+    id: generateId()
+  }
+
+  console.log('READING', reading)
+
+  readings = readings.concat(reading)
 
   response.status(200).end()
 })
