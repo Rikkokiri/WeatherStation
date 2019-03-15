@@ -54,7 +54,7 @@ void loop()
 
   if (WiFiMulti.run() == WL_CONNECTED)
   {
-
+    /*
     location_t loc = location.getGeoFromWiFi();
 
     Serial.println("Location request data");
@@ -62,7 +62,7 @@ void loop()
     Serial.println("Latitude: " + String(loc.lat, 7));
     Serial.println("Longitude: " + String(loc.lon, 7));
     Serial.println("Accuracy: " + String(loc.accuracy));
-
+    */
     HTTPClient http;
 
     Serial.println("Begin HTTP");
@@ -88,5 +88,5 @@ void loop()
     Serial.println("Failed to connect to wifi");
   }
 
-  delay(10000);
+  delay(30000);
 }
