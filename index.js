@@ -1,6 +1,12 @@
 const express = require('express')
 const app = express()
 
+// Models
+const Reading = require('./models/reading')
+
+
+// ----------- Middleware -----------
+
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
@@ -41,7 +47,11 @@ const generateId = () => {
 
 //-------- Get all readings ----------------
 app.get('/api/readings', (request, response) => {
-  response.json(readings)
+  Reading
+    .find({}, { __v: 0 })
+    .then(readings => {
+      response.json(readings)
+    })
 })
 
 //-------- Get a single reading ----------------
@@ -63,24 +73,33 @@ app.post('/api/newreading/', (request, response) => {
 
   const body = request.body
 
+  if (body.name === undefined) {
+    return response.status(400).json({ error: 'sensor name missing' })
+  }
   if (body.temperature === undefined) {
     return response.status(400).json({ error: 'temperature missing' })
   }
+  if (body.humidity === undefined) {
+    return response.status(400).json({ error: 'humidity missing' })
+  }
+  if (body.pressure === undefined) {
+    return response.status(400).json({ error: 'pressure missing' })
+  }
 
-  const reading = {
+  const reading = new Reading({
     sensorname: body.name,
     temperature: body.temperature,
     pressure: body.pressure,
     humidity: body.humidity,
-    timestamp: new Date(),
-    id: generateId()
-  }
+    date: new Date()
+  })
 
-  console.log('READING', reading)
+  reading
+    .save()
+    .then(savedReading => {
+      response.json(savedReading).status(200).end()
+    })
 
-  readings = readings.concat(reading)
-
-  response.status(200).end()
 })
 
 const error = (request, response) => {
@@ -90,7 +109,7 @@ const error = (request, response) => {
 app.use(error)
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running at port ${PORT}`)
 })
