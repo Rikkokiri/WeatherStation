@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/newreading/
+Content-Type: application/json
+
+{
+  "name": "Yokkila sensor",
+  "temperature": 23.45,
+  "humidity": 14.53,
+  "pressure": 54.34
+}
