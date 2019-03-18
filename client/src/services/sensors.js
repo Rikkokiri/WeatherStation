@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = '/api/sensors'
+const baseURL = 'http://localhost:3001/sensors'
 
 // Get all
 const getAll = () => {
