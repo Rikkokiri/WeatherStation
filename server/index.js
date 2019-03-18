@@ -23,24 +23,10 @@ const logger = (request, response, next) => {
 
 app.use(logger)
 
-// -----------------------------------
-// ============ TEST DATA ============
-let readings = [
-  {
-    id: 1,
-    sensorname: 'Bedroom sensor',
-    temperature: 22.12,
-    humidity: 25.23
-  }
-]
 
 // --------------------------------
 // ============ HELPER METHODS ============
 
-const generateId = () => {
-  const maxId = readings.length > 0 ? readings.map(n => n.id).sort((a, b) => a - b).reverse()[0] : 1
-  return maxId + 1
-}
 
 // --------------------------------
 // ============ ROUTES ============
@@ -56,14 +42,19 @@ app.get('/api/readings', (request, response) => {
 
 //-------- Get a single reading ----------------
 app.get('/api/readings/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const reading = readings.find(reading => reading.id === id)
-
-  if (reading) {
-    response.json(reading)
-  } else {
-    response.status(404).end()
-  }
+  Reading
+    .findById(request.params.id)
+    .then(reading => {
+      if (reading) {
+        response.json(reading)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: "malformatted id" })
+    })
 })
 
 //-------- New reading ----------------
@@ -99,7 +90,6 @@ app.post('/api/newreading/', (request, response) => {
     .then(savedReading => {
       response.json(savedReading).status(200).end()
     })
-
 })
 
 const error = (request, response) => {

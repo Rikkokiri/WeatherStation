@@ -22,9 +22,15 @@ const reading = new Reading({
   date: new Date()
 })
 
+/*
 reading
   .save()
   .then(response => {
     console.log('reading saved!')
     mongoose.connection.close()
   })
+  */
+
+const Sensor = mongoose.model('Sensor', {
+
+})
