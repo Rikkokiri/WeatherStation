@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+// Charts
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
+
 // Services
 import readingsService from './services/readings'
 import sensorsService from './services/sensors'
@@ -13,7 +16,6 @@ import Dropdown from 'react-bootstrap/Dropdown'
 
 import Table from 'react-bootstrap/Table'
 
-
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -21,6 +23,7 @@ class App extends React.Component {
     this.state = {
       sensors: [],
       readings: [],
+      chosenReadings: [],
       selectedSensor: 'HomeSensor'
     }
 
@@ -45,8 +48,19 @@ class App extends React.Component {
         console.log(response)
         this.setState({ readings: response })
       })
+
   }
 
+  selectSensor = (name) => {
+    return () => {
+      console.log(`Sensor ${name} is being selected`)
+      const relevantReadings = this.state.readings.filter(reading => reading.sensorname === name)
+      this.setState({
+        selectedSensor: name,
+        chosenReadings: relevantReadings
+      })
+    }
+  }
 
   render() {
     return (
@@ -62,8 +76,10 @@ class App extends React.Component {
           <Col>
             <DropdownButton id="dropdown-item-button" title="Select Sensor">
               {
-                this.state.sensors.filter(reading => reading.sensorname === this.state.selectedSensor).map(sensor =>
-                  <Dropdown.Item key={sensor.name} as="button">{sensor.name}</Dropdown.Item>
+                this.state.sensors.map(sensor =>
+                  <Dropdown.Item key={sensor.name} as="button" onClick={this.selectSensor(sensor.name)}>
+                    {sensor.name}
+                  </Dropdown.Item>
                 )
               }
             </DropdownButton>
@@ -81,7 +97,7 @@ class App extends React.Component {
             </thead>
             <tbody>
               {
-                this.state.readings.filter(reading => reading.sensorname === this.state.selectedSensor)
+                this.state.chosenReadings
                   .map(reading =>
                     <tr key={reading.id}>
                       <td>{reading.date}</td>
@@ -95,10 +111,29 @@ class App extends React.Component {
           </Table>
         </Row>
         <Row>
-          <h2>Temperature</h2>
-        </Row>
-        <Row>
-          <h2>Humidity</h2>
+          <Col>
+            <h2>Temperature</h2>
+
+            <LineChart width={400} height={400} data={this.state.chosenReadings}>
+              <Line type="monotone" dataKey="temperature" stroke="#FF4455" />
+              <CartesianGrid stroke="#ccc" />
+              <XAxis dataKey="name" />
+              <YAxis type="number" domain={[20, 30]} />
+              <Tooltip />
+            </LineChart>
+          </Col>
+          <Col>
+            <h2>Humidity &amp; Temperature</h2>
+            <LineChart width={400} height={400} data={this.state.chosenReadings}>
+              <Line type="monotone" dataKey="humidity" stroke="#FF4455" />
+              <Line type="monotone" dataKey="temperature" stroke="#000" />
+              <CartesianGrid stroke="#ccc" />
+              <XAxis dataKey="name" />
+              <YAxis type="number" domain={[20, 30]} />
+              <Tooltip />
+              <Legend />
+            </LineChart>
+          </Col>
         </Row>
         <Row>
           <h2>Pressure</h2>
