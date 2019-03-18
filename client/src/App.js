@@ -1,20 +1,41 @@
 import React, { Component } from 'react';
 
-// Charts
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
-
 // Services
 import readingsService from './services/readings'
 import sensorsService from './services/sensors'
 
-// Bootstrap
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
+// Charts
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 
-import Table from 'react-bootstrap/Table'
+// Components
+import NavBar from './components/NavBar'
+
+// Material-UI
+import { withStyles } from '@material-ui/core/styles';
+import { spacing } from '@material-ui/system';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+
+// --- Grid
+import Grid from '@material-ui/core/Grid';
+
+// --- Tabs
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+
+// --- Table
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
+
+const styles = {
+  root: {
+    flexGrow: 1,
+  }
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -24,7 +45,8 @@ class App extends React.Component {
       sensors: [],
       readings: [],
       chosenReadings: [],
-      selectedSensor: 'HomeSensor'
+      selectedSensor: 'YokkilaSensor',
+      currentTab: 0
     }
 
     console.log('constructor')
@@ -46,9 +68,12 @@ class App extends React.Component {
       .then(response => {
         console.log('Promise fulfilled')
         console.log(response)
-        this.setState({ readings: response })
+        const relevantReadings = response.filter(reading => reading.sensorname === this.state.selectedSensor)
+        this.setState({
+          readings: response,
+          chosenReadings: relevantReadings
+        })
       })
-
   }
 
   selectSensor = (name) => {
@@ -62,58 +87,67 @@ class App extends React.Component {
     }
   }
 
+  handleTabChange = (event, value) => {
+    this.setState({ currentTab: value })
+  }
+
   render() {
+    const { classes } = this.props;
+
     return (
-      <Container>
-        <Row>
-          <Col>
-            <h1>Dashboard</h1>
-            <p>Welcome home, <strong>Pilvi</strong></p>
-          </Col>
+      <div className={classes.root}>
+        <NavBar />
+        <Paper>
+          <Tabs
+            value={this.state.currentTab}
+            onChange={this.handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+          >
+            {
+              this.state.sensors.map(sensor =>
+                <Tab key={sensor.name} as="button" onClick={this.selectSensor(sensor.name)} label={sensor.name} />
+              )
+            }
+          </Tabs>
+        </Paper>
 
-        </Row>
-        <Row>
-          <Col>
-            <DropdownButton id="dropdown-item-button" title="Select Sensor">
-              {
-                this.state.sensors.map(sensor =>
-                  <Dropdown.Item key={sensor.name} as="button" onClick={this.selectSensor(sensor.name)}>
-                    {sensor.name}
-                  </Dropdown.Item>
-                )
-              }
-            </DropdownButton>
-          </Col>
-        </Row>
-        <Row>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Temperature</th>
-                <th>Pressure</th>
-                <th>Humidity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                this.state.chosenReadings
-                  .map(reading =>
-                    <tr key={reading.id}>
-                      <td>{reading.date}</td>
-                      <td>{reading.temperature}</td>
-                      <td>{reading.pressure}</td>
-                      <td>{reading.humidity}</td>
-                    </tr>
-                  )
-              }
-            </tbody>
-          </Table>
-        </Row>
-        <Row>
-          <Col>
+        <Grid container
+          spacing={8}
+          alignItems="center"
+          justify="center">
+
+          <Grid item xs={12}>
+            <Paper>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <th>Date</th>
+                    <th>Temperature</th>
+                    <th>Pressure</th>
+                    <th>Humidity</th>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {
+                    this.state.chosenReadings
+                      .map(reading =>
+                        <TableRow key={reading.id}>
+                          <TableCell>{reading.date}</TableCell>
+                          <TableCell>{reading.temperature}</TableCell>
+                          <TableCell>{reading.pressure}</TableCell>
+                          <TableCell>{reading.humidity}</TableCell>
+                        </TableRow>
+                      )
+                  }
+                </TableBody>
+              </Table>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
             <h2>Temperature</h2>
-
             <LineChart width={400} height={400} data={this.state.chosenReadings}>
               <Line type="monotone" dataKey="temperature" stroke="#FF4455" />
               <CartesianGrid stroke="#ccc" />
@@ -121,8 +155,9 @@ class App extends React.Component {
               <YAxis type="number" domain={[20, 30]} />
               <Tooltip />
             </LineChart>
-          </Col>
-          <Col>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
             <h2>Humidity &amp; Temperature</h2>
             <LineChart width={400} height={400} data={this.state.chosenReadings}>
               <Line type="monotone" dataKey="humidity" stroke="#FF4455" />
@@ -133,14 +168,12 @@ class App extends React.Component {
               <Tooltip />
               <Legend />
             </LineChart>
-          </Col>
-        </Row>
-        <Row>
-          <h2>Pressure</h2>
-        </Row>
-      </Container>
+          </Grid>
+
+        </Grid>
+      </div >
     );
   }
 }
 
-export default App;
+export default withStyles(styles)(App);
