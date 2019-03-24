@@ -49,7 +49,7 @@ app.get('/api/readings', (request, response) => {
   Reading
     .find({}, { __v: 0 })
     .then(readings => {
-      response.json(readings)
+      response.json(readings.map(Reading.format))
     })
 })
 
@@ -59,7 +59,7 @@ app.get('/api/readings/:id', (request, response) => {
     .findById(request.params.id)
     .then(reading => {
       if (reading) {
-        response.json(reading)
+        response.json(Reading.format(reading))
       } else {
         response.status(404).end()
       }
