@@ -28,8 +28,8 @@ readingSchema.statics.format = (reading) => {
     sensorname: reading.sensorname,
     temperature: reading.temperature,
     pressure: reading.pressure,
-    humidity: reading.pressure,
-    date: reading.date
+    humidity: Math.round(reading.humidity * 100) / 100,
+    date: new Date(reading.date).getTime()
   }
 }
 
