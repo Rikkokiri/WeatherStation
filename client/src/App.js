@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 // Services
 import readingsService from './services/readings'
@@ -12,7 +12,6 @@ import NavBar from './components/NavBar'
 
 // Material-UI
 import { withStyles } from '@material-ui/core/styles';
-import { spacing } from '@material-ui/system';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
@@ -24,11 +23,10 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 // --- Forms & Inputs
-import InputLabel from '@material-ui/core/InputLabel';
+/*import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-
+import Select from '@material-ui/core/Select';*/
 import Slider from '@material-ui/lab/Slider';
 
 // --- Table
@@ -70,7 +68,6 @@ class App extends React.Component {
       .getAll()
       .then(response => {
         console.log('Sensors promise fulfilled')
-        console.log(response)
         this.setState({
           sensors: response,
           selectedSensor: response[0].name
@@ -81,7 +78,6 @@ class App extends React.Component {
       .getAll()
       .then(response => {
         console.log('Readings promise fulfilled')
-        console.log(response)
 
         this.setState({
           readings: response,
@@ -131,8 +127,12 @@ class App extends React.Component {
   calculateDateBoundaries = () => {
     const boundaries = this.state.chosenReadings.map(reading => new Date(reading.date).setHours(0, 0, 0, 0, 0))
       .filter((v, i, a) => a.indexOf(v) === i).map(date => new Date(date).getTime())
-    console.log('Boundaries', boundaries)
     return boundaries
+  }
+
+  calculateAverage = (array, dataKey) => {
+    const sum = array.reduce(function (acc, val) { return acc + val[dataKey] }, 0)
+    return Math.round(sum / array.length * 100) / 100;
   }
 
   render() {
@@ -166,12 +166,14 @@ class App extends React.Component {
             <Slider
               classes={{ container: classes.slider }}
               value={this.state.range}
-              min={1}
+              min={(1 / 24)}
               max={14}
               step={1}
               onChange={this.handleRangeChange}
             />
-            <p>{this.state.range} days</p>
+            <p>
+              {this.state.range} {this.state.range < 1 ? ' hours' : ' day(s)'}
+            </p>
           </Grid>
 
           <Grid item xs={12} md={5}>
@@ -208,7 +210,7 @@ class App extends React.Component {
                 <Tooltip />
                 {
                   this.calculateDateBoundaries().map(boundary =>
-                    <ReferenceLine x={boundary} stroke="blue" label={new Date(boundary).toDateString()} />
+                    <ReferenceLine key={boundary} x={boundary} stroke="blue" label={new Date(boundary).toDateString()} />
                   )
                 }
 
@@ -216,7 +218,16 @@ class App extends React.Component {
             </ResponsiveContainer>
           </Grid>
 
-          <Grid item xs={10} md={8}>
+          <Grid item xs={12} md={5}>
+            <Typography variant="h5">Data Summary</Typography>
+            <ul>
+              <li key="datapoints">{this.state.chosenReadings.length} data points over {this.calculateDateBoundaries().length} days</li>
+              <li key="temp">Average temperature {this.calculateAverage(this.state.chosenReadings, "temperature")}</li>
+              <li key="hum">Average humidity {this.calculateAverage(this.state.chosenReadings, "humidity")}</li>
+            </ul>
+          </Grid>
+
+          <Grid item xs={12} md={5}>
             <Typography variant="h5">Sensors</Typography>
 
             <Table>
