@@ -4,11 +4,12 @@ import React from 'react';
 import readingsService from './services/readings'
 import sensorsService from './services/sensors'
 
-// Charts
-import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts'
-
 // Components
 import NavBar from './components/NavBar'
+import CustomLineChart from './components/CustomLineChart'
+
+// Charts
+import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts'
 
 // Material-UI
 import { withStyles } from '@material-ui/core/styles';
@@ -166,7 +167,7 @@ class App extends React.Component {
             <Slider
               classes={{ container: classes.slider }}
               value={this.state.range}
-              min={(1 / 24)}
+              min={1}
               max={14}
               step={1}
               onChange={this.handleRangeChange}
@@ -179,43 +180,27 @@ class App extends React.Component {
           <Grid item xs={12} md={5}>
             <Typography align="center" variant="h5">Temperature</Typography>
 
-            <ResponsiveContainer width='90%' height={300}>
-              <LineChart
-                cx="50%"
-                cy="50%"
-                outerRadius="80%"
-                data={this.state.chosenReadings}>
-                <Line type="monotone" dataKey="temperature" stroke="#FF4455" dot={false} name="Temperature" unit="°" />
-                <CartesianGrid stroke="#ccc" vertical={false} />
-                <XAxis dataKey="name" />
-                <YAxis type="number" domain={[20, 30]} />
-                <Tooltip />
-              </LineChart>
-            </ResponsiveContainer>
+            <CustomLineChart
+              data={this.state.chosenReadings}
+              yDataKey={"temperature"}
+              yUnit={"°"}
+              yDomain={[20, 30]}
+              xDataKey={"date"}
+              boundaries={this.calculateDateBoundaries()}
+            />
           </Grid>
 
           <Grid item xs={12} md={5}>
             <Typography align="center" variant="h5">Humidity</Typography>
 
-            <ResponsiveContainer width='90%' height={300}>
-              <LineChart
-                cx="50%"
-                cy="50%"
-                outerRadius="80%"
-                data={this.state.chosenReadings}>
-                <Line type="monotone" dataKey="humidity" stroke="#FF4455" dot={false} name="Humidity" unit="%" />
-                <CartesianGrid stroke="#ccc" vertical={false} />
-                <XAxis dataKey="date" tick={false} type="number" domain={['dataMin', 'dataMax']} />
-                <YAxis type="number" domain={[21, 28]} allowDecimals={false} />
-                <Tooltip />
-                {
-                  this.calculateDateBoundaries().map(boundary =>
-                    <ReferenceLine key={boundary} x={boundary} stroke="blue" label={new Date(boundary).toDateString()} />
-                  )
-                }
-
-              </LineChart>
-            </ResponsiveContainer>
+            <CustomLineChart
+              data={this.state.chosenReadings}
+              yDataKey={"humidity"}
+              yUnit={"%"}
+              yDomain={[21, 28]}
+              xDataKey={"date"}
+              boundaries={this.calculateDateBoundaries()}
+            />
           </Grid>
 
           <Grid item xs={12} md={5}>
