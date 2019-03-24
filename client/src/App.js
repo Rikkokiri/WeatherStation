@@ -5,7 +5,7 @@ import readingsService from './services/readings'
 import sensorsService from './services/sensors'
 
 // Charts
-import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
+import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts'
 
 // Components
 import NavBar from './components/NavBar'
@@ -32,11 +32,11 @@ import Select from '@material-ui/core/Select';
 import Slider from '@material-ui/lab/Slider';
 
 // --- Table
-/*import Table from '@material-ui/core/Table';
+import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';*/
+import TableRow from '@material-ui/core/TableRow';
 
 const styles = {
   root: {
@@ -128,6 +128,13 @@ class App extends React.Component {
     })
   }
 
+  calculateDateBoundaries = () => {
+    const boundaries = this.state.chosenReadings.map(reading => new Date(reading.date).setHours(0, 0, 0, 0, 0))
+      .filter((v, i, a) => a.indexOf(v) === i).map(date => new Date(date).getTime())
+    console.log('Boundaries', boundaries)
+    return boundaries
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -170,45 +177,69 @@ class App extends React.Component {
           <Grid item xs={12} md={5}>
             <Typography align="center" variant="h5">Temperature</Typography>
 
-            <LineChart width={500} height={300} data={this.state.chosenReadings}>
-              <Line type="monotone" dataKey="temperature" stroke="#FF4455" />
-              <CartesianGrid stroke="#ccc" />
-              <XAxis dataKey="name" />
-              <YAxis type="number" domain={[20, 30]} />
-              <Tooltip />
-            </LineChart>
-          </Grid>
-
-          <Grid item xs={12} md={5}>
-            <Typography align="center" variant="h5">Humidity</Typography>
-
-            <ResponsiveContainer width='100%' height={300}>
+            <ResponsiveContainer width='90%' height={300}>
               <LineChart
                 cx="50%"
                 cy="50%"
                 outerRadius="80%"
-                data={this.state.chosenReadings}
-              >
-                <Line type="monotone" dataKey="humidity" stroke="#FF4455" dot={false} />
+                data={this.state.chosenReadings}>
+                <Line type="monotone" dataKey="temperature" stroke="#FF4455" dot={false} name="Temperature" unit="°" />
                 <CartesianGrid stroke="#ccc" vertical={false} />
                 <XAxis dataKey="name" />
-                <YAxis type="number" domain={[21, 28]} />
+                <YAxis type="number" domain={[20, 30]} />
                 <Tooltip />
               </LineChart>
             </ResponsiveContainer>
           </Grid>
 
           <Grid item xs={12} md={5}>
-            <Typography align="center" variant="h5">Humidity &amp; Temperature</Typography>
+            <Typography align="center" variant="h5">Humidity</Typography>
 
-            <LineChart width={500} height={300} data={this.state.chosenReadings}>
-              <Line type="monotone" dataKey="humidity" stroke="#FF4455" />
-              <Line type="monotone" dataKey="temperature" stroke="#000" />
-              <CartesianGrid stroke="#ccc" />
-              <XAxis dataKey="name" />
-              <YAxis type="number" domain={[20, 30]} />
-              <Tooltip />
-            </LineChart>
+            <ResponsiveContainer width='90%' height={300}>
+              <LineChart
+                cx="50%"
+                cy="50%"
+                outerRadius="80%"
+                data={this.state.chosenReadings}>
+                <Line type="monotone" dataKey="humidity" stroke="#FF4455" dot={false} name="Humidity" unit="%" />
+                <CartesianGrid stroke="#ccc" vertical={false} />
+                <XAxis dataKey="date" tick={false} type="number" domain={['dataMin', 'dataMax']} />
+                <YAxis type="number" domain={[21, 28]} allowDecimals={false} />
+                <Tooltip />
+                {
+                  this.calculateDateBoundaries().map(boundary =>
+                    <ReferenceLine x={boundary} stroke="blue" label={new Date(boundary).toDateString()} />
+                  )
+                }
+
+              </LineChart>
+            </ResponsiveContainer>
+          </Grid>
+
+          <Grid item xs={10} md={8}>
+            <Typography variant="h5">Sensors</Typography>
+
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <th>Sensorname</th>
+                  <th>First online</th>
+                  <th>Last online</th>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  this.state.sensors
+                    .map(sensor =>
+                      <TableRow key={sensor._id}>
+                        <TableCell>{sensor.name}</TableCell>
+                        <TableCell>{new Date(sensor.firstonline).toLocaleString('fi-FI')}</TableCell>
+                        <TableCell>{new Date(sensor.lastonline).toLocaleString('fi-FI')}</TableCell>
+                      </TableRow>
+                    )
+                }
+              </TableBody>
+            </Table>
           </Grid>
 
         </Grid>
