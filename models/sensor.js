@@ -29,8 +29,8 @@ sensorSchema.statics.format = (sensor) => {
   return {
     id: sensor._id,
     name: sensor.name,
-    firstonline: sensor.firstonline,
-    lastonline: sensor.lastonline
+    firstonline: new Date(sensor.firstonline).getTime(),
+    lastonline: new Date(sensor.lastonline).getTime()
   }
 }
 
