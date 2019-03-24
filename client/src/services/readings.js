@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const baseURL = 'http://localhost:3001/readings'
+//const baseURL = 'http://localhost:3001/readings'
+const baseURL = 'http://localhost:3001/api/readings'
 
 // Get all
 const getAll = () => {

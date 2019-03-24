@@ -12,7 +12,7 @@
 #include "config.h"
 
 #define I2C_ADDR 0x76 // define the sensor i2c address
-#define NAME "YokkilaSensor"
+#define NAME "Bedroom"
 
 WifiLocation location(APIKEY);
 
@@ -88,5 +88,5 @@ void loop()
     Serial.println("Failed to connect to wifi");
   }
 
-  delay(30000);
+  delay(600000);
 }

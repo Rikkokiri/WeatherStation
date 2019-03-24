@@ -5,7 +5,7 @@ import readingsService from './services/readings'
 import sensorsService from './services/sensors'
 
 // Charts
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
+import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 
 // Components
 import NavBar from './components/NavBar'
@@ -23,18 +23,28 @@ import Grid from '@material-ui/core/Grid';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
+// --- Forms & Inputs
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
+import Slider from '@material-ui/lab/Slider';
+
 // --- Table
-import Table from '@material-ui/core/Table';
+/*import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-
+import TableRow from '@material-ui/core/TableRow';*/
 
 const styles = {
   root: {
     flexGrow: 1,
-  }
+  },
+  slider: {
+    padding: '22px 0px'
+  },
 }
 
 class App extends React.Component {
@@ -45,8 +55,9 @@ class App extends React.Component {
       sensors: [],
       readings: [],
       chosenReadings: [],
-      selectedSensor: 'YokkilaSensor',
-      currentTab: 0
+      selectedSensor: '',
+      currentTab: 0,
+      range: 1
     }
 
     console.log('constructor')
@@ -58,21 +69,24 @@ class App extends React.Component {
     sensorsService
       .getAll()
       .then(response => {
-        console.log('Promise fulfilled')
+        console.log('Sensors promise fulfilled')
         console.log(response)
-        this.setState({ sensors: response })
+        this.setState({
+          sensors: response,
+          selectedSensor: response[0].name
+        })
       })
 
     readingsService
       .getAll()
       .then(response => {
-        console.log('Promise fulfilled')
+        console.log('Readings promise fulfilled')
         console.log(response)
-        const relevantReadings = response.filter(reading => reading.sensorname === this.state.selectedSensor)
+
         this.setState({
           readings: response,
-          chosenReadings: relevantReadings
         })
+        this.filterReadings()
       })
   }
 
@@ -89,6 +103,29 @@ class App extends React.Component {
 
   handleTabChange = (event, value) => {
     this.setState({ currentTab: value })
+    this.filterReadings()
+  }
+
+  handleRangeChange = (event, value) => {
+    this.setState({ range: value })
+    this.filterReadings()
+  }
+
+  toMilliseconds = (days) => {
+    return days * 24 * 60 * 60 * 1000
+  }
+
+  filterReadings = () => {
+    // Filter by sensor
+    const sensorReadings = this.state.readings.filter(reading => reading.sensorname === this.state.selectedSensor)
+
+    // Filter by timerange
+    const relevantReadings = sensorReadings.filter(reading =>
+      new Date().getTime() - new Date(reading.date).getTime() <= this.toMilliseconds(this.state.range))
+
+    this.setState({
+      chosenReadings: relevantReadings
+    })
   }
 
   render() {
@@ -118,37 +155,22 @@ class App extends React.Component {
           alignItems="center"
           justify="center">
 
-          <Grid item xs={12}>
-            <Paper>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <th>Date</th>
-                    <th>Temperature</th>
-                    <th>Pressure</th>
-                    <th>Humidity</th>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {
-                    this.state.chosenReadings
-                      .map(reading =>
-                        <TableRow key={reading.id}>
-                          <TableCell>{reading.date}</TableCell>
-                          <TableCell>{reading.temperature}</TableCell>
-                          <TableCell>{reading.pressure}</TableCell>
-                          <TableCell>{reading.humidity}</TableCell>
-                        </TableRow>
-                      )
-                  }
-                </TableBody>
-              </Table>
-            </Paper>
+          <Grid item xs={10} md={8}>
+            <Slider
+              classes={{ container: classes.slider }}
+              value={this.state.range}
+              min={1}
+              max={14}
+              step={1}
+              onChange={this.handleRangeChange}
+            />
+            <p>{this.state.range} days</p>
           </Grid>
 
-          <Grid item xs={12} md={4}>
-            <h2>Temperature</h2>
-            <LineChart width={400} height={400} data={this.state.chosenReadings}>
+          <Grid item xs={12} md={5}>
+            <Typography align="center" variant="h5">Temperature</Typography>
+
+            <LineChart width={500} height={300} data={this.state.chosenReadings}>
               <Line type="monotone" dataKey="temperature" stroke="#FF4455" />
               <CartesianGrid stroke="#ccc" />
               <XAxis dataKey="name" />
@@ -157,16 +179,35 @@ class App extends React.Component {
             </LineChart>
           </Grid>
 
-          <Grid item xs={12} md={4}>
-            <h2>Humidity &amp; Temperature</h2>
-            <LineChart width={400} height={400} data={this.state.chosenReadings}>
+          <Grid item xs={12} md={5}>
+            <Typography align="center" variant="h5">Humidity</Typography>
+
+            <ResponsiveContainer width='100%' height={300}>
+              <LineChart
+                cx="50%"
+                cy="50%"
+                outerRadius="80%"
+                data={this.state.chosenReadings}
+              >
+                <Line type="monotone" dataKey="humidity" stroke="#FF4455" dot={false} />
+                <CartesianGrid stroke="#ccc" vertical={false} />
+                <XAxis dataKey="name" />
+                <YAxis type="number" domain={[21, 28]} />
+                <Tooltip />
+              </LineChart>
+            </ResponsiveContainer>
+          </Grid>
+
+          <Grid item xs={12} md={5}>
+            <Typography align="center" variant="h5">Humidity &amp; Temperature</Typography>
+
+            <LineChart width={500} height={300} data={this.state.chosenReadings}>
               <Line type="monotone" dataKey="humidity" stroke="#FF4455" />
               <Line type="monotone" dataKey="temperature" stroke="#000" />
               <CartesianGrid stroke="#ccc" />
               <XAxis dataKey="name" />
               <YAxis type="number" domain={[20, 30]} />
               <Tooltip />
-              <Legend />
             </LineChart>
           </Grid>
 

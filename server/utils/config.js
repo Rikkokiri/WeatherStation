@@ -13,8 +13,11 @@ if (process.env.NODE_ENV === 'test') {
 }
 */
 
-const mongoUrl = process.env.MONGODB_URI
+let mongoUrl = process.env.MONGODB_URI
+
+let weatherApiKey = process.env.OPENWEATHERMAP_API_KEY
 
 module.exports = {
-  mongoUrl
+  mongoUrl,
+  weatherApiKey
 }

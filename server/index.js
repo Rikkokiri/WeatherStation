@@ -3,7 +3,7 @@ const app = express()
 
 // Models
 const Reading = require('./models/reading')
-
+const Sensor = require('./models/sensor')
 
 // ----------- Middleware -----------
 
@@ -30,6 +30,19 @@ app.use(logger)
 
 // --------------------------------
 // ============ ROUTES ============
+
+//-------- Get all sensors -----------------
+app.get('/api/sensors', (request, response) => {
+  Sensor
+    .find({}, { __v: 0 })
+    .then(sensors => {
+      response.json(sensors)
+    })
+})
+
+app.post('/api/sensors', (request, response) => {
+
+})
 
 //-------- Get all readings ----------------
 app.get('/api/readings', (request, response) => {
@@ -77,6 +90,20 @@ app.post('/api/newreading/', (request, response) => {
     return response.status(400).json({ error: 'pressure missing' })
   }
 
+  // Save sensor / update timestamp
+  const sensor = {
+    name: body.name,
+    lastonline: new Date()
+  }
+
+  Sensor
+    .findOneAndUpdate({ name: body.name },
+      sensor,
+      { upsert: true, new: true })
+    .then(savedSensor => {
+      console.log('Saved sensor', savedSensor)
+    })
+
   const reading = new Reading({
     sensorname: body.name,
     temperature: body.temperature,
@@ -88,7 +115,12 @@ app.post('/api/newreading/', (request, response) => {
   reading
     .save()
     .then(savedReading => {
+      console.log('Saved reading', reading)
       response.json(savedReading).status(200).end()
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(500).send({ error: "Unknown error" })
     })
 })
 
@@ -102,4 +134,8 @@ app.use(error)
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running at port ${PORT}`)
+})
+
+app.on('close', () => {
+  mongoose.connection.close()
 })
