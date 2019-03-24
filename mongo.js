@@ -6,6 +6,7 @@ console.log('URL', url)
 
 mongoose.connect(url, { useNewUrlParser: true })
 
+/*
 const Reading = mongoose.model('Reading', {
   sensorname: String,
   temperature: Number,
@@ -14,6 +15,7 @@ const Reading = mongoose.model('Reading', {
   date: Date
 })
 
+
 const reading = new Reading({
   sensorname: 'YokkilaSensor',
   temperature: 25.58,
@@ -21,6 +23,7 @@ const reading = new Reading({
   humidity: 21.87207,
   date: new Date()
 })
+*/
 
 /*
 reading
@@ -32,5 +35,22 @@ reading
   */
 
 const Sensor = mongoose.model('Sensor', {
-
+  name: String,
+  firstonline: Date,
+  lastonline: Date
 })
+
+const sensor = new Sensor({
+  name: 'TestSensor',
+  firstonline: new Date(),
+  lastonline: new Date()
+})
+
+/*
+sensor
+  .save()
+  .then(response => {
+    console.log('Sensor saved!')
+    mongoose.connection.close()
+  })
+  */
