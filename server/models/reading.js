@@ -18,7 +18,10 @@ const readingSchema = new mongoose.Schema({
   temperature: Number,
   pressure: Number,
   humidity: Number,
-  date: Date
+  date: Date,
+  temperatureOut: Number,
+  humidityOut: Number,
+  pressureOut: Number
 })
 
 // Format method
@@ -29,7 +32,10 @@ readingSchema.statics.format = (reading) => {
     temperature: reading.temperature,
     pressure: reading.pressure,
     humidity: Math.round(reading.humidity * 100) / 100,
-    date: new Date(reading.date).getTime()
+    date: new Date(reading.date).getTime(),
+    temperatureOut: Math.round((reading.temperatureOut - 273.15) * 100) / 100,
+    humidityOut: reading.humidityOut,
+    pressureOut: reading.pressureOut
   }
 }
 
