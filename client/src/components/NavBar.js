@@ -15,7 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = {
   root: {
-    flexGrow: 1,
+    flexGrow: 1
   },
   grow: {
     flexGrow: 1,

@@ -13,7 +13,7 @@ const CustomLineChart = ({ data, yDataKey, yUnit, yDomain, xDataKey, boundaries 
         <Line
           type="monotone"
           dataKey={yDataKey}
-          stroke="#FF4455"
+          stroke="#7D53DE"
           dot={false}
           name={yDataKey.charAt(0).toUpperCase() + yDataKey.slice(1)}
           unit={yUnit}
