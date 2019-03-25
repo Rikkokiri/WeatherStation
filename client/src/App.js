@@ -7,6 +7,8 @@ import sensorsService from './services/sensors'
 // Components
 import NavBar from './components/NavBar'
 import CustomLineChart from './components/CustomLineChart'
+import Greeting from './components/Greeting'
+import TimeDateDisplay from './components/TimeDateDisplay'
 
 // Charts
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts'
@@ -142,21 +144,36 @@ class App extends React.Component {
     return (
       <div className={classes.root}>
         <NavBar />
-        <Paper>
-          <Tabs
-            value={this.state.currentTab}
-            onChange={this.handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            centered
-          >
-            {
-              this.state.sensors.map(sensor =>
-                <Tab key={sensor.name} as="button" onClick={this.selectSensor(sensor.name)} label={sensor.name} />
-              )
-            }
-          </Tabs>
-        </Paper>
+
+        <Grid container
+          spacing={8}
+          alignItems="center"
+          justify="center">
+
+          <Grid item xs={6}>
+            <Greeting user={'Ossian'} />
+          </Grid>
+
+          <Grid item xs={6} >
+            <TimeDateDisplay />
+          </Grid>
+        </Grid>
+
+
+        <Tabs
+          value={this.state.currentTab}
+          onChange={this.handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+        >
+          {
+            this.state.sensors.map(sensor =>
+              <Tab key={sensor.name} as="button" onClick={this.selectSensor(sensor.name)} label={sensor.name} />
+            )
+          }
+        </Tabs>
+
 
         <Grid container
           spacing={8}
