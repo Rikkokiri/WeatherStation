@@ -19,7 +19,7 @@ WifiLocation location(APIKEY);
 ESP8266WiFiMulti WiFiMulti;
 
 Adafruit_BME280 bme;                      // Initialize sensor
-const int capacity = JSON_OBJECT_SIZE(4); // Initialize JSON document
+const int capacity = JSON_OBJECT_SIZE(7); // Initialize JSON document
 
 void setup()
 {
@@ -40,7 +40,7 @@ void loop()
   // JSON buffer
   StaticJsonBuffer<capacity> jsonbuffer;
   JsonObject &data = jsonbuffer.createObject();
-  char JSONmsgBuffer[128];
+  char JSONmsgBuffer[224];
 
   // Get sensor readings
   data["name"] = NAME;
@@ -48,13 +48,12 @@ void loop()
   data["pressure"] = bme.readPressure();
   data["humidity"] = bme.readHumidity();
 
-  data.printTo(JSONmsgBuffer);
   data.prettyPrintTo(Serial);
   Serial.println();
 
   if (WiFiMulti.run() == WL_CONNECTED)
   {
-    /*
+
     location_t loc = location.getGeoFromWiFi();
 
     Serial.println("Location request data");
@@ -62,7 +61,23 @@ void loop()
     Serial.println("Latitude: " + String(loc.lat, 7));
     Serial.println("Longitude: " + String(loc.lon, 7));
     Serial.println("Accuracy: " + String(loc.accuracy));
-    */
+
+    if(loc.lat != 0 && loc.lon != 0) {
+      String latitudeString = String(loc.lat, 7);
+      char latBuffer[latitudeString.length()+1];
+      latitudeString.toCharArray(latBuffer, latitudeString.length()+1);
+      
+      data.set("longitude", latBuffer);
+
+      data["latitude"] = LONGITUDE;
+    }
+    else {
+      data["longitude"] = LONGITUDE;
+      data["latitude"] = LATITUDE;
+    }
+
+    data.printTo(JSONmsgBuffer);
+
     HTTPClient http;
 
     Serial.println("Begin HTTP");
@@ -86,7 +101,9 @@ void loop()
   else
   {
     Serial.println("Failed to connect to wifi");
+    WiFi.mode(WIFI_STA);
+    WiFiMulti.addAP(SSID, WIFI_PASSWD);
   }
 
-  delay(600000);
+  delay(60000);
 }
