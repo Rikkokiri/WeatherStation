@@ -9,6 +9,7 @@ import NavBar from './components/NavBar'
 import CustomLineChart from './components/CustomLineChart'
 import Greeting from './components/Greeting'
 import TimeDateDisplay from './components/TimeDateDisplay'
+import DataSummary from './components/DataSummary'
 
 // Charts
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts'
@@ -58,7 +59,7 @@ class App extends React.Component {
       chosenReadings: [],
       selectedSensor: '',
       currentTab: 0,
-      range: 1
+      range: 14
     }
 
     console.log('constructor')
@@ -87,6 +88,9 @@ class App extends React.Component {
         })
         this.filterReadings()
       })
+    this.setState({
+      currentTab: 0
+    })
   }
 
   selectSensor = (name) => {
@@ -194,39 +198,34 @@ class App extends React.Component {
             </p>
           </Grid>
 
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={6}>
             <Typography align="center" variant="h5">Temperature</Typography>
 
             <CustomLineChart
               data={this.state.chosenReadings}
-              yDataKey={"temperature"}
+              yDataKeys={["temperature", "temperatureOut"]}
               yUnit={"°"}
-              yDomain={[20, 30]}
+              yDomain={[-10, 30]}
               xDataKey={"date"}
               boundaries={this.calculateDateBoundaries()}
             />
           </Grid>
 
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={6}>
             <Typography align="center" variant="h5">Humidity</Typography>
 
             <CustomLineChart
               data={this.state.chosenReadings}
-              yDataKey={"humidity"}
+              yDataKeys={["humidity", "humidityOut"]}
               yUnit={"%"}
-              yDomain={[21, 28]}
+              yDomain={[10, 100]}
               xDataKey={"date"}
               boundaries={this.calculateDateBoundaries()}
             />
           </Grid>
 
           <Grid item xs={12} md={5}>
-            <Typography variant="h5">Data Summary</Typography>
-            <ul>
-              <li key="datapoints">{this.state.chosenReadings.length} data points over {this.calculateDateBoundaries().length} days</li>
-              <li key="temp">Average temperature {this.calculateAverage(this.state.chosenReadings, "temperature")}</li>
-              <li key="hum">Average humidity {this.calculateAverage(this.state.chosenReadings, "humidity")}</li>
-            </ul>
+            <DataSummary data={this.state.chosenReadings} boundaries={this.calculateDateBoundaries()} />
           </Grid>
 
           <Grid item xs={12} md={5}>
