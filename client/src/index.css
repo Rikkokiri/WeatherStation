@@ -1,0 +1,35 @@
+body {
+  /* background-image: linear-gradient(rgba(255, 195, 83, 0.308),
+    rgba(255, 195, 83, 0.308)),
+    url('./images/fall.jpg'); */
+  /*background-image: linear-gradient(rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1)),
+    url('./images/summer.jpg');*/
+  background-color: #FDFDFC;
+  background-size: cover;
+  color: #415867;
+}
+
+div.greeting {
+  font-size: 3em;
+  line-height: 1em;
+  font-family: "Roboto",
+    "Helvetica",
+    "Arial",
+    sans-serif;
+  font-weight: 300;
+  margin: 20px !important;
+}
+
+.greeting span {
+  font-weight: 600;
+}
+
+.timeDateDisplay {
+  text-align: right;
+}
+
+.timeDateDisplay h2,
+.timeDateDisplay h6 {
+  margin-right: 20px;
+}
