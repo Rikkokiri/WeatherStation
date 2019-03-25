@@ -105,5 +105,5 @@ void loop()
     WiFiMulti.addAP(SSID, WIFI_PASSWD);
   }
 
-  delay(60000);
+  delay(600000);
 }
