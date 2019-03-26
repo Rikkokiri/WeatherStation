@@ -143,44 +143,6 @@ app.post('/api/newreading/', (request, response) => {
       console.log('Saved sensor', savedSensor)
     })
 
-  // Get weather data if longitude and latitude data is present
-  // api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}
-  // http://api.openweathermap.org/data/2.5/forecast?id=524901&APPID={APIKEY}
-  var temperatureOut = 0;
-  var humidityOut = 0;
-  var pressureOut = 0;
-
-  /*if (Number(body.longitude) !== 0 && Number(body.latitude) !== 0) {
-
-
-    const urlOpenWeatherCurrent = 'http://api.openweathermap.org/data/2.5/weather?'
-    var query = {
-      APPID: OpenWeatherApiKey,
-      lat: body.latitude,
-      lon: body.longitude
-    }
-    console.log('Query', query)
-
-    nodeRequest({
-      url: urlOpenWeatherCurrent,
-      qs: query
-    }, function (error, res, bod) {
-      if (!error && res.statusCode === 200) {
-        weatherdata = JSON.parse(bod)
-        console.log(bod)
-        temperatureOut = weatherdata.main.temp - 273.15 // Convert to celcius from kelvins
-        console.log('Temperature out', temperatureOut)
-        humidityOut = weatherdata.main.humidity
-        console.log('Humidity out', humidityOut)
-        pressureOut = weatherdata.main.pressure
-        console.log('Pressure out', pressureOut)
-      }
-      else {
-        console.log('error:', error)
-      }
-    });
-  }*/
-
   var weatherDataPromise = retrieveWeatherData(body.latitude, body.longitude);
 
   weatherDataPromise.then(result => {
