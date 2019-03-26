@@ -19,6 +19,9 @@ app.use(bodyParser.json())
 const cors = require('cors')
 app.use(cors())
 
+app.use(express.static('build'))
+
+
 const logger = (request, response, next) => {
   console.log('Method: ', request.method)
   console.log('Path: ', request.path)
