@@ -11,13 +11,9 @@ import Greeting from './components/Greeting'
 import TimeDateDisplay from './components/TimeDateDisplay'
 import DataSummary from './components/DataSummary'
 
-// Charts
-import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts'
-
 // Material-UI
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 
 // --- Grid
 import Grid from '@material-ui/core/Grid';
@@ -27,10 +23,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 // --- Forms & Inputs
-/*import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';*/
 import Slider from '@material-ui/lab/Slider';
 
 // --- Table
