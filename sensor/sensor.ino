@@ -51,8 +51,10 @@ void loop()
   data.prettyPrintTo(Serial);
   Serial.println();
 
-  if (WiFiMulti.run() == WL_CONNECTED)
-  {
+  if (WiFiMulti.run() != WL_CONNECTED) {
+    reconnect();
+  }
+  else {
 
     location_t loc = location.getGeoFromWiFi();
 
@@ -62,16 +64,25 @@ void loop()
     Serial.println("Longitude: " + String(loc.lon, 7));
     Serial.println("Accuracy: " + String(loc.accuracy));
 
-    if(loc.lat != 0 && loc.lon != 0) {
-      String latitudeString = String(loc.lat, 7);
-      char latBuffer[latitudeString.length()+1];
-      latitudeString.toCharArray(latBuffer, latitudeString.length()+1);
-      
-      data.set("longitude", latBuffer);
+    if (loc.lat != 0 && loc.lon != 0)
+    {
+      Serial.println("Location found!");
 
-      data["latitude"] = LONGITUDE;
+      String latitudeString = String(loc.lat, 7);
+      char latBuffer[latitudeString.length() + 1];
+      latitudeString.toCharArray(latBuffer, latitudeString.length() + 1);
+
+      data.set("latitude", latBuffer);
+
+      String longitudeString = String(loc.lon, 7);
+      char lonBuffer[longitudeString.length() + 1];
+      longitudeString.toCharArray(lonBuffer, longitudeString.length() + 1);
+      data.set("longitude", lonBuffer);
     }
-    else {
+    else
+    {
+      Serial.println("Location not found. Using default location.");
+
       data["longitude"] = LONGITUDE;
       data["latitude"] = LATITUDE;
     }
@@ -98,12 +109,19 @@ void loop()
 
     http.end();
   }
-  else
-  {
-    Serial.println("Failed to connect to wifi");
-    WiFi.mode(WIFI_STA);
-    WiFiMulti.addAP(SSID, WIFI_PASSWD);
-  }
-
+  
   delay(600000);
 }
+
+void reconnect() {
+  Serial.println("Reconnecting");
+  WiFi.mode(WIFI_STA);
+  WiFiMulti.addAP(SSID, WIFI_PASSWD);
+
+  while(WiFiMulti.run() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected!");
+}
+
