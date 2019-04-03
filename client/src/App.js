@@ -147,7 +147,7 @@ class App extends React.Component {
           justify="center">
 
           <Grid item xs={6}>
-            <Greeting user={'Ossian'} />
+            <Greeting user={'Pilvi'} />
           </Grid>
 
           <Grid item xs={6} >

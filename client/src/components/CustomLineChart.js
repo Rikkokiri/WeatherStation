@@ -1,6 +1,9 @@
 import React from 'react'
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts'
 
+var dateOptions = { month: 'numeric', day: 'numeric' };
+var longerDateOptions = { month: 'numeric', day: 'numeric', year: 'numeric' };
+
 const CustomLineChart = ({ data, yDataKeys, yUnit, yDomain, xDataKey, boundaries }) => {
 
   return (
@@ -24,10 +27,10 @@ const CustomLineChart = ({ data, yDataKeys, yUnit, yDomain, xDataKey, boundaries
         <CartesianGrid stroke="#ccc" vertical={false} />
         <XAxis dataKey={xDataKey} tick={false} type="number" domain={['dataMin', 'dataMax']} />
         <YAxis type="number" domain={yDomain} allowDecimals={false} />
-        <Tooltip />
+        <Tooltip labelFormatter={(value) => new Date(value).toLocaleDateString('en-GB', longerDateOptions)} />
         {
           boundaries.map(boundary =>
-            <ReferenceLine key={boundary} x={boundary} stroke="blue" label={new Date(boundary).toDateString()} />
+            <ReferenceLine key={boundary} x={boundary} stroke="blue" label={new Date(boundary).toLocaleDateString('en-GB', dateOptions)} />
           )
         }
       </LineChart>
