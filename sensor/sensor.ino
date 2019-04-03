@@ -19,7 +19,7 @@ WifiLocation location(APIKEY);
 ESP8266WiFiMulti WiFiMulti;
 
 Adafruit_BME280 bme;                      // Initialize sensor
-const int capacity = JSON_OBJECT_SIZE(7); // Initialize JSON document
+const int capacity = JSON_OBJECT_SIZE(8); // Initialize JSON document
 
 void setup()
 {
@@ -33,6 +33,8 @@ void setup()
 
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP(SSID, WIFI_PASSWD);
+  WiFiMulti.addAP(MOBILE_SSID, MOBILE_WIFI_PASSWD);
+  
 }
 
 void loop()
@@ -40,16 +42,13 @@ void loop()
   // JSON buffer
   StaticJsonBuffer<capacity> jsonbuffer;
   JsonObject &data = jsonbuffer.createObject();
-  char JSONmsgBuffer[224];
+  char JSONmsgBuffer[256];
 
   // Get sensor readings
   data["name"] = NAME;
   data["temperature"] = bme.readTemperature();
   data["pressure"] = bme.readPressure();
   data["humidity"] = bme.readHumidity();
-
-  data.prettyPrintTo(Serial);
-  Serial.println();
 
   if (WiFiMulti.run() != WL_CONNECTED) {
     reconnect();
@@ -87,6 +86,9 @@ void loop()
       data["latitude"] = LATITUDE;
     }
 
+    data.prettyPrintTo(Serial);
+    Serial.println();
+
     data.printTo(JSONmsgBuffer);
 
     HTTPClient http;
@@ -110,14 +112,16 @@ void loop()
     http.end();
   }
   
-  delay(600000);
+  delay(60000 * 30);
 }
 
 void reconnect() {
   Serial.println("Reconnecting");
   WiFi.mode(WIFI_STA);
+  
   WiFiMulti.addAP(SSID, WIFI_PASSWD);
-
+  WiFiMulti.addAP(MOBILE_SSID, MOBILE_WIFI_PASSWD);
+  
   while(WiFiMulti.run() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
