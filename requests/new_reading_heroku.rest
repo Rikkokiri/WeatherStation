@@ -1,11 +1,11 @@
-POST https://sulpro-weather-station.herokuapp.com/api/newreading
+POST http://sulpro-weather-station.herokuapp.com/api/newreading
 Content-Type: application/json
 
 {
-  "name":"YokkilaSensor",
-  "temperature":24.42,
-  "pressure":100511.3,
-  "humidity":21.69,
+  "name": "TestSensor",
+  "temperature": 25.38,
+  "pressure": 101227.7,
+  "humidity": 20.27832,
   "longitude": "22.288723",
   "latitude": "60.461212"
 }
