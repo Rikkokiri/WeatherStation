@@ -2,7 +2,7 @@ import React from 'react'
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts'
 
 var dateOptions = { month: 'numeric', day: 'numeric' };
-var longerDateOptions = { month: 'numeric', day: 'numeric', year: 'numeric' };
+var longerDateOptions = { month: 'numeric', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
 
 const CustomLineChart = ({ data, yDataKeys, yUnit, yDomain, xDataKey, boundaries }) => {
 
