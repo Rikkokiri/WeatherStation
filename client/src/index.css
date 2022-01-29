@@ -1,22 +1,28 @@
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
   /* background-image: linear-gradient(rgba(255, 195, 83, 0.308),
     rgba(255, 195, 83, 0.308)),
     url('./images/fall.jpg'); */
   /*background-image: linear-gradient(rgba(0, 0, 0, 0.1),
     rgba(0, 0, 0, 0.1)),
     url('./images/summer.jpg');*/
-  background-color: #FDFDFC;
+  background-color: #fdfdfc;
   background-size: cover;
   color: #415867;
+  padding-bottom: 3rem;
 }
 
 div.greeting {
   font-size: 3em;
   line-height: 1em;
-  font-family: "Roboto",
-    "Helvetica",
-    "Arial",
-    sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 300;
   margin: 20px !important;
 }
