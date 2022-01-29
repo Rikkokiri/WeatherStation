@@ -1,18 +1,26 @@
 {
-  "sensors": [{
-      "name": "YokkilaSensor"
+  "sensors": [
+    {
+      "name": "YokkilaSensor",
+      "id": "yokkila",
+      "firstonline": "2022 - 01 - 28 T16:17:22.968 + 00:00 ",
+      "lastonline": "2022 - 01 - 28 T16:31:35.186 + 00:00"
     },
     {
-      "name": "HomeSensor"
+      "name": "HomeSensor",
+      "id": "home-sensor",
+      "firstonline": "2022 - 01 - 28 T16:18:54.242 + 00:00",
+      "lastonline": "2022 - 01 - 28 T16:31:04.636 + 00:00"
     }
   ],
-  "readings": [{
+  "readings": [
+    {
       "id": "5c8bd012bcaee853dbee797f",
       "sensorname": "YokkilaSensor",
       "temperature": 25.49,
       "pressure": 98942.09,
       "humidity": 22.6543,
-      "date": "2019 - 03 - 15 T16: 17: 22.968 + 00: 00 "
+      "date": "2022 - 01 - 28 T16:17:22.968 + 00:00 "
     },
     {
       "id": "5c8bd031bcaee853dbee7980",
@@ -20,77 +28,87 @@
       "temperature": 25.41,
       "pressure": 98944.77,
       "humidity": 22.75781,
-      "date": "2019 - 03 - 15 T16: 17: 53.318 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:17:53.318 + 00:00"
+    },
+    {
       "id": "5c8bd04f071be153ee85132e",
       "sensorname": "YokkilaSensor",
       "temperature": 25.41,
       "pressure": 98945.81,
       "humidity": 22.69336,
-      "date": "2019 - 03 - 15 T16: 18: 23.654 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:18:23.654 + 00:00"
+    },
+    {
       "id": "5c8bd06eaa406553f9cbc9e9",
       "sensorname": "HomeSensor",
       "temperature": 25.37,
       "pressure": 98945.5,
       "humidity": 22.66992,
-      "date": "2019 - 03 - 15 T16: 18: 54.242 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:18:54.242 + 00:00"
+    },
+    {
       "id": "5c8bd08caa406553f9cbc9ea",
       "sensorname": "YokkilaSensor",
       "temperature": 25.34,
       "pressure": 98942.73,
       "humidity": 22.63574,
-      "date": "2019 - 03 - 15 T16: 19: 24.461 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:19:24.461 + 00:00"
+    },
+    {
       "id": "5c8bd148aa406553f9cbc9eb",
       "sensorname": "HomeSensor",
       "temperature": 25.64,
       "pressure": 98941.19,
       "humidity": 22.58691,
-      "date": "2019 - 03 - 15 T16: 22: 32.347 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:22:32.347 + 00:00"
+    },
+    {
       "id": "5c8bd166aa406553f9cbc9ec",
       "sensorname": "YokkilaSensor",
       "temperature": 25.56,
       "pressure": 98938.34,
       "humidity": 22.57129,
-      "date": "2019 - 03 - 15 T16: 23: 02.576 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:23:02.576 + 00:00"
+    },
+    {
       "id": "5c8bd185aa406553f9cbc9ed",
       "sensorname": "YokkilaSensor",
       "temperature": 25.52,
       "pressure": 98939.98,
       "humidity": 22.56934,
-      "date": "2019 - 03 - 15 T16: 23: 33.163 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:23:33.163 + 00:00"
+    },
+    {
       "id": "5c8bd1a3aa406553f9cbc9ee",
       "sensorname": "YokkilaSensor",
       "temperature": 25.52,
       "pressure": 98937.28,
       "humidity": 22.45117,
-      "date": "2019 - 03 - 15 T16: 24: 03.405 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:24:03.405 + 00:00"
+    },
+    {
       "id": "5c8bd32af39a01081c403287",
       "sensorname": "HomeSensor",
       "temperature": 25.21,
       "pressure": 98935.72,
       "humidity": 22.7793,
-      "date": "2019 - 03 - 15 T16: 30: 34.476 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:30:34.476 + 00:00"
+    },
+    {
       "id": "5c8bd348f39a01081c403288",
       "sensorname": "HomeSensor",
       "temperature": 25.16,
       "pressure": 98934.17,
       "humidity": 22.75586,
-      "date": "2019 - 03 - 15 T16: 31: 04.636 + 00: 00"
-    }, {
+      "date": "2022 - 01 - 28 T16:31:04.636 + 00:00"
+    },
+    {
       "id": "5c8bd367f39a01081c403289",
       "sensorname": "YokkilaSensor",
       "temperature": 25.14,
       "pressure": 98935.06,
       "humidity": 22.67969,
-      "date": "2019 - 03 - 15 T16: 31: 35.186 + 00: 00"
+      "date": "2022 - 01 - 28 T16:31:35.186 + 00:00"
     }
   ]
 }
