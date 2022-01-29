@@ -3,16 +3,17 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <ESP8266WiFiMulti.h>
-#include <ESP8266HTTPClient.h>
 #include <Wire.h>
 #include <Adafruit_BME280.h>
 #include <WifiLocation.h>
+#include <ESP8266WiFiMulti.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h> 
 
 #include "config.h"
 
 #define I2C_ADDR 0x76 // define the sensor i2c address
-#define NAME "Bedroom"
+#define NAME "Espoo"
 
 WifiLocation location(APIKEY);
 
@@ -24,6 +25,8 @@ const int capacity = JSON_OBJECT_SIZE(8); // Initialize JSON document
 void setup()
 {
   Serial.begin(57600);
+  delay(1000);
+  Serial.println("Starting setup");
 
   Wire.begin();
   if (!bme.begin(I2C_ADDR))
@@ -91,10 +94,11 @@ void loop()
 
     data.printTo(JSONmsgBuffer);
 
+    WiFiClient client;
     HTTPClient http;
 
     Serial.println("Begin HTTP");
-    http.begin(IP);
+    http.begin(client, IP);
 
     http.addHeader("Content-Type", "application/json");
     int httpcode = http.POST(JSONmsgBuffer);
@@ -128,4 +132,3 @@ void reconnect() {
   }
   Serial.println("Connected!");
 }
-
