@@ -1,15 +1,16 @@
 import React from 'react';
 
 // Services
-import readingsService from './services/readings'
-import sensorsService from './services/sensors'
+import readingsService from './services/readings';
+import sensorsService from './services/sensors';
 
 // Components
-import NavBar from './components/NavBar'
-import CustomLineChart from './components/CustomLineChart'
-import Greeting from './components/Greeting'
-import TimeDateDisplay from './components/TimeDateDisplay'
-import DataSummary from './components/DataSummary'
+// import NavBar from './components/NavBar';
+import CustomLineChart from './components/CustomLineChart';
+import Greeting from './components/Greeting';
+import TimeDateDisplay from './components/TimeDateDisplay';
+import DataSummary from './components/DataSummary';
+import SensorTable from './components/SensorTable';
 
 // Material-UI
 import { withStyles } from '@material-ui/core/styles';
@@ -23,139 +24,134 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 // --- Forms & Inputs
-import Slider from '@material-ui/lab/Slider';
-
-// --- Table
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import Slider from '@material-ui/core/Slider';
 
 const styles = {
   root: {
     flexGrow: 1,
   },
   slider: {
-    padding: '22px 0px'
+    padding: '22px 0px',
   },
-}
+};
 
 class App extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       sensors: [],
       readings: [],
       chosenReadings: [],
-      selectedSensor: '',
+      selectedSensor: undefined,
       currentTab: 0,
-      range: 14
-    }
+      range: 14,
+    };
 
-    console.log('constructor')
+    console.log('constructor');
   }
 
   componentDidMount() {
-    console.log('App did mount')
+    console.log('App did mount');
 
-    sensorsService
-      .getAll()
-      .then(response => {
-        console.log('Sensors promise fulfilled')
-        this.setState({
-          sensors: response,
-          selectedSensor: response[0].name
-        })
-      })
+    sensorsService.getAll().then((response) => {
+      console.log('Sensors promise fulfilled');
+      this.setState({
+        sensors: response,
+        selectedSensor: response[0].name,
+      });
+    });
 
-    readingsService
-      .getAll()
-      .then(response => {
-        console.log('Readings promise fulfilled')
+    readingsService.getAll().then((response) => {
+      console.log('Readings promise fulfilled');
 
-        this.setState({
-          readings: response,
-        })
-        this.filterReadings()
-      })
+      this.setState({
+        readings: response,
+      });
+      this.filterReadings();
+    });
     this.setState({
-      currentTab: 0
-    })
+      currentTab: 0,
+    });
   }
 
   selectSensor = (name) => {
     return () => {
-      console.log(`Sensor ${name} is being selected`)
-      const relevantReadings = this.state.readings.filter(reading => reading.sensorname === name)
+      console.log(`Sensor ${name} is being selected`);
+      const relevantReadings = !name
+        ? this.state.readings
+        : this.state.readings.filter((reading) => reading.sensorname === name);
       this.setState({
         selectedSensor: name,
-        chosenReadings: relevantReadings
-      })
-    }
-  }
+        chosenReadings: relevantReadings,
+      });
+    };
+  };
 
   handleTabChange = (event, value) => {
-    this.setState({ currentTab: value })
-    this.filterReadings()
-  }
+    this.setState({ currentTab: value });
+    this.filterReadings();
+  };
 
   handleRangeChange = (event, value) => {
-    this.setState({ range: value })
-    this.filterReadings()
-  }
+    this.setState({ range: value });
+    this.filterReadings();
+  };
 
   toMilliseconds = (days) => {
-    return days * 24 * 60 * 60 * 1000
-  }
+    return days * 24 * 60 * 60 * 1000;
+  };
 
   filterReadings = () => {
     // Filter by sensor
-    const sensorReadings = this.state.readings.filter(reading => reading.sensorname === this.state.selectedSensor)
-
+    const sensorReadings = !this.selectedSensor
+      ? this.state.readings
+      : this.state.readings.filter(
+          (reading) => reading.sensorname === this.state.selectedSensor
+        );
     // Filter by timerange
-    const relevantReadings = sensorReadings.filter(reading =>
-      new Date().getTime() - new Date(reading.date).getTime() <= this.toMilliseconds(this.state.range))
+    const relevantReadings = sensorReadings.filter(
+      (reading) =>
+        new Date().getTime() - new Date(reading.date).getTime() <=
+        this.toMilliseconds(this.state.range)
+    );
 
     this.setState({
-      chosenReadings: relevantReadings
-    })
-  }
+      chosenReadings: relevantReadings,
+    });
+  };
 
   calculateDateBoundaries = () => {
-    const boundaries = this.state.chosenReadings.map(reading => new Date(reading.date).setHours(0, 0, 0, 0, 0))
-      .filter((v, i, a) => a.indexOf(v) === i).map(date => new Date(date).getTime())
-    return boundaries
-  }
+    const boundaries = this.state.chosenReadings
+      .map((reading) => new Date(reading.date).setHours(0, 0, 0, 0, 0))
+      .filter((v, i, a) => a.indexOf(v) === i)
+      .map((date) => new Date(date).getTime());
+    return boundaries;
+  };
 
   calculateAverage = (array, dataKey) => {
-    const sum = array.reduce(function (acc, val) { return acc + val[dataKey] }, 0)
-    return Math.round(sum / array.length * 100) / 100;
-  }
+    const sum = array.reduce(function (acc, val) {
+      return acc + val[dataKey];
+    }, 0);
+    return Math.round((sum / array.length) * 100) / 100;
+  };
 
   render() {
     const { classes } = this.props;
 
     return (
       <div className={classes.root}>
-        <NavBar />
+        {/* <NavBar /> */}
 
-        <Grid container
-          spacing={8}
-          alignItems="center"
-          justify="center">
-
+        <Grid container spacing={8} alignItems="center" justify="center">
           <Grid item xs={6}>
-            <Greeting user={'Pilvi'} />
+            <Greeting user={'Ossian'} />
           </Grid>
 
-          <Grid item xs={6} >
+          <Grid item xs={6}>
             <TimeDateDisplay />
           </Grid>
         </Grid>
-
-
         <Tabs
           value={this.state.currentTab}
           onChange={this.handleTabChange}
@@ -163,19 +159,27 @@ class App extends React.Component {
           textColor="primary"
           centered
         >
-          {
-            this.state.sensors.map(sensor =>
-              <Tab key={sensor.name} as="button" onClick={this.selectSensor(sensor.name)} label={sensor.name} />
-            )
-          }
+          <Tab
+            key={'all'}
+            as="button"
+            onClick={this.selectSensor(undefined)}
+            label={'All'}
+          />
+          {this.state.sensors.map((sensor) => (
+            <Tab
+              key={sensor.name}
+              as="button"
+              onClick={this.selectSensor(sensor.name)}
+              label={sensor.name}
+            />
+          ))}
         </Tabs>
-
-
-        <Grid container
+        <Grid
+          container
           spacing={8}
-          alignItems="center"
-          justify="center">
-
+          alignItems="flex-start"
+          justifyContent="space-around"
+        >
           <Grid item xs={10} md={8}>
             <Slider
               classes={{ container: classes.slider }}
@@ -189,65 +193,43 @@ class App extends React.Component {
               {this.state.range} {this.state.range < 1 ? ' hours' : ' day(s)'}
             </p>
           </Grid>
-
           <Grid item xs={12} md={6}>
-            <Typography align="center" variant="h5">Temperature</Typography>
-
+            <Typography align="center" variant="h5">
+              Temperature
+            </Typography>
             <CustomLineChart
               data={this.state.chosenReadings}
-              yDataKeys={["temperature", "temperatureOut"]}
-              yUnit={"°"}
+              yDataKeys={['temperature', 'temperatureOut']}
+              yUnit={'°'}
               yDomain={[-10, 30]}
-              xDataKey={"date"}
+              xDataKey={'date'}
               boundaries={this.calculateDateBoundaries()}
             />
           </Grid>
-
           <Grid item xs={12} md={6}>
-            <Typography align="center" variant="h5">Humidity</Typography>
-
+            <Typography align="center" variant="h5">
+              Humidity
+            </Typography>
             <CustomLineChart
               data={this.state.chosenReadings}
-              yDataKeys={["humidity", "humidityOut"]}
-              yUnit={"%"}
+              yDataKeys={['humidity', 'humidityOut']}
+              yUnit={'%'}
               yDomain={[10, 100]}
-              xDataKey={"date"}
+              xDataKey={'date'}
               boundaries={this.calculateDateBoundaries()}
             />
           </Grid>
-
-          <Grid item xs={12} md={5}>
-            <DataSummary data={this.state.chosenReadings} boundaries={this.calculateDateBoundaries()} />
+          <Grid item xs={12} md={3}>
+            <DataSummary
+              data={this.state.chosenReadings}
+              boundaries={this.calculateDateBoundaries()}
+            />
           </Grid>
-
-          <Grid item xs={12} md={5}>
-            <Typography variant="h5">Sensors</Typography>
-
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <th>Sensorname</th>
-                  <th>First online</th>
-                  <th>Last online</th>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {
-                  this.state.sensors
-                    .map(sensor =>
-                      <TableRow key={sensor._id}>
-                        <TableCell>{sensor.name}</TableCell>
-                        <TableCell>{new Date(sensor.firstonline).toLocaleString('fi-FI')}</TableCell>
-                        <TableCell>{new Date(sensor.lastonline).toLocaleString('fi-FI')}</TableCell>
-                      </TableRow>
-                    )
-                }
-              </TableBody>
-            </Table>
+          <Grid item xs={12} md={8}>
+            <SensorTable sensors={this.state.sensors}></SensorTable>
           </Grid>
-
         </Grid>
-      </div >
+      </div>
     );
   }
 }
