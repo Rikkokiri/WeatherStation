@@ -11,3 +11,18 @@
   - WifiLocation package
 - Compile and upload code to the board. It should run automatically
 - When viewing logs, make sure to set log window baud rate to 57600
+
+Additionally, file config.h should be placed in `/sensor` directory with the following content
+
+```
+#define APIKEY [API key for Google Maps api]
+#define SSID [name of wifi]
+#define WIFI_PASSWD
+#define MOBILE_SSID [alternative wifi name]
+#define MOBILE_WIFI_PASSWD [wifi password]
+#define LONGITUDE
+#define LATITUDE
+#define IP "https://sulpro-weather-station.herokuapp.com/api/newreading"
+```
+
+`LONGITUDE` and `LATITUDE` are coordinates for a default location that will be used to query weather data if sensor cannot retrieve location from Maps API.
