@@ -173,7 +173,6 @@ app.use(error);
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running at port ${PORT}`);
-  console.log(`Database is ${process.env.MONGODB_URI}`);
 });
 
 app.on('close', () => {
