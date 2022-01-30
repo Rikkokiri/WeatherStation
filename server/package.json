@@ -7,7 +7,11 @@
     "start": "node -r dotenv/config index.js",
     "watch": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "publishheroku": "cd ../ && git subtree push --prefix server sulpro-heroku master || true"
+    "publishheroku": "cd ../ && git subtree push --prefix server sulpro-heroku master || true",
+    "build:ui": "rm -rf build && cd ../client/ && npm run build && cp -r build ../server",
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
+    "logs:prod": "heroku logs --tail"
   },
   "author": "Rajala",
   "license": "MIT",
