@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 
 import Drawer from '@material-ui/core/Drawer';
 
@@ -15,7 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = {
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   grow: {
     flexGrow: 1,
@@ -28,25 +28,30 @@ const styles = {
 
 class NavBar extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
-      drawerOpen: false
-    }
+      drawerOpen: false,
+    };
   }
 
   toggleDrawer = (open) => () => {
-    this.setState({ drawerOpen: open })
-  }
+    this.setState({ drawerOpen: open });
+  };
 
   render() {
-    const { classes } = this.props
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.toggleDrawer(true)}>
+            <IconButton
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="Menu"
+              onClick={this.toggleDrawer(true)}
+            >
               <MenuIcon />
             </IconButton>
           </Toolbar>
@@ -73,7 +78,7 @@ class NavBar extends React.Component {
           </div>
         </Drawer>
       </div>
-    )
+    );
   }
 }
 

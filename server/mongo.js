@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
-require('dotenv').config()
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-const url = process.env.MONGODB_URI
-console.log('URL', url)
+const url = process.env.MONGODB_URI;
+console.log('URL', url);
 
-mongoose.connect(url, { useNewUrlParser: true })
+mongoose.connect(url, { useNewUrlParser: true });
 
 /*
 const Reading = mongoose.model('Reading', {
@@ -37,14 +37,14 @@ reading
 const Sensor = mongoose.model('Sensor', {
   name: String,
   firstonline: Date,
-  lastonline: Date
-})
+  lastonline: Date,
+});
 
 const sensor = new Sensor({
   name: 'TestSensor',
   firstonline: new Date(),
-  lastonline: new Date()
-})
+  lastonline: new Date(),
+});
 
 /*
 sensor

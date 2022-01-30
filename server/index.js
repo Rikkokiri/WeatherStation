@@ -1,41 +1,38 @@
-const express = require('express')
-const app = express()
-const nodeRequest = require('request')
-const querystring = require('querystring')
-require('dotenv').config()
+const express = require('express');
+const app = express();
+const nodeRequest = require('request');
+const querystring = require('querystring');
+require('dotenv').config();
 
 // API keys
-const OpenWeatherApiKey = process.env.OPENWEATHERMAP_API_KEY
+const OpenWeatherApiKey = process.env.OPENWEATHERMAP_API_KEY;
 
 // Models
-const Reading = require('./models/reading')
-const Sensor = require('./models/sensor')
+const Reading = require('./models/reading');
+const Sensor = require('./models/sensor');
 
 // ----------- Middleware -----------
 
-const bodyParser = require('body-parser')
-app.use(bodyParser.json())
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
-const cors = require('cors')
-app.use(cors())
+const cors = require('cors');
+app.use(cors());
 
-app.use(express.static('build'))
-
+app.use(express.static('build'));
 
 const logger = (request, response, next) => {
-  console.log('Method: ', request.method)
-  console.log('Path: ', request.path)
-  console.log('Body: ', request.body)
-  console.log('-------------------')
-  next()
-}
+  console.log('Method: ', request.method);
+  console.log('Path: ', request.path);
+  console.log('Body: ', request.body);
+  console.log('-------------------');
+  next();
+};
 
-app.use(logger)
-
+app.use(logger);
 
 // --------------------------------
 // ============ HELPER METHODS ============
-
 
 // --------------------------------
 
@@ -49,22 +46,21 @@ function retrieveWeatherData(latitude, longitude) {
     qs: {
       APPID: OpenWeatherApiKey,
       lat: latitude,
-      lon: longitude
-    }
-  }
+      lon: longitude,
+    },
+  };
 
   // Return a new promise
   return new Promise(function (resolve, reject) {
     // Do async job
     nodeRequest.get(options, function (err, resp, body) {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
-        resolve(JSON.parse(body))
+        resolve(JSON.parse(body));
       }
-    })
-  })
-
+    });
+  });
 }
 
 // --------------------------------
@@ -72,125 +68,114 @@ function retrieveWeatherData(latitude, longitude) {
 
 //-------- Get all sensors -----------------
 app.get('/api/sensors', (request, response) => {
-  Sensor
-    .find({}, { __v: 0 })
-    .then(sensors => {
-      response.json(sensors)
-    })
-})
+  Sensor.find({}, { __v: 0 }).then((sensors) => {
+    response.json(sensors);
+  });
+});
 
-app.post('/api/sensors', (request, response) => {
-
-})
+app.post('/api/sensors', (request, response) => {});
 
 //-------- Get all readings ----------------
 app.get('/api/readings', (request, response) => {
-  Reading
-    .find({}, { __v: 0 })
-    .then(readings => {
-      response.json(readings.map(Reading.format))
-    })
-})
+  Reading.find({}, { __v: 0 }).then((readings) => {
+    response.json(readings.map(Reading.format));
+  });
+});
 
 //-------- Get a single reading ----------------
 app.get('/api/readings/:id', (request, response) => {
-  Reading
-    .findById(request.params.id)
-    .then(reading => {
+  Reading.findById(request.params.id)
+    .then((reading) => {
       if (reading) {
-        response.json(Reading.format(reading))
+        response.json(Reading.format(reading));
       } else {
-        response.status(404).end()
+        response.status(404).end();
       }
     })
-    .catch(error => {
-      console.log(error)
-      response.status(400).send({ error: "malformatted id" })
-    })
-})
+    .catch((error) => {
+      console.log(error);
+      response.status(400).send({ error: 'malformatted id' });
+    });
+});
 
 //-------- New reading ----------------
 app.post('/api/newreading/', (request, response) => {
-  console.log('Received a new reading at', new Date())
-  console.log('Message: ', request.body)
+  console.log('Received a new reading at', new Date());
+  console.log('Message: ', request.body);
 
-  const body = request.body
+  const body = request.body;
 
   if (body.name === undefined) {
-    return response.status(400).json({ error: 'sensor name missing' })
+    return response.status(400).json({ error: 'sensor name missing' });
   }
   if (body.temperature === undefined) {
-    return response.status(400).json({ error: 'temperature missing' })
+    return response.status(400).json({ error: 'temperature missing' });
   }
   if (body.humidity === undefined) {
-    return response.status(400).json({ error: 'humidity missing' })
+    return response.status(400).json({ error: 'humidity missing' });
   }
   if (body.pressure === undefined) {
-    return response.status(400).json({ error: 'pressure missing' })
+    return response.status(400).json({ error: 'pressure missing' });
   }
 
   // Save sensor / update timestamp
   const sensor = {
     name: body.name,
-    lastonline: new Date()
-  }
+    lastonline: new Date(),
+  };
 
-  Sensor
-    .findOneAndUpdate({ name: body.name },
-      sensor,
-      { upsert: true, new: true })
-    .then(savedSensor => {
-      console.log('Saved sensor', savedSensor)
-    })
+  Sensor.findOneAndUpdate({ name: body.name }, sensor, {
+    upsert: true,
+    new: true,
+  }).then((savedSensor) => {
+    console.log('Saved sensor', savedSensor);
+  });
 
   var weatherDataPromise = retrieveWeatherData(body.latitude, body.longitude);
 
-  weatherDataPromise.then(result => {
+  weatherDataPromise
+    .then((result) => {
+      console.log('Promise result', result);
 
-    console.log('Promise result', result)
+      const reading = new Reading({
+        sensorname: body.name,
+        temperature: body.temperature,
+        pressure: body.pressure,
+        humidity: body.humidity,
+        date: new Date(),
+        temperatureOut: result.main.temp,
+        humidityOut: result.main.humidity,
+        pressureOut: result.main.pressure,
+      });
 
-    const reading = new Reading({
-      sensorname: body.name,
-      temperature: body.temperature,
-      pressure: body.pressure,
-      humidity: body.humidity,
-      date: new Date(),
-      temperatureOut: result.main.temp,
-      humidityOut: result.main.humidity,
-      pressureOut: result.main.pressure
+      reading
+        .save()
+        .then((savedReading) => {
+          console.log('Saved reading', reading);
+          response.json(savedReading).status(200).end();
+        })
+        .catch((error) => {
+          console.log(error);
+          response.status(500).send({ error: 'Unknown error' });
+        });
     })
-
-    reading
-      .save()
-      .then(savedReading => {
-        console.log('Saved reading', reading)
-        response.json(savedReading).status(200).end()
-      })
-      .catch(error => {
-        console.log(error)
-        response.status(500).send({ error: "Unknown error" })
-      })
-
-  })
-    .catch(promiseError => {
-      console.log('error:', promiseError)
-    })
-
-
-})
+    .catch((promiseError) => {
+      console.log('error:', promiseError);
+    });
+});
 
 const error = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
+  response.status(404).send({ error: 'unknown endpoint' });
+};
 
-app.use(error)
+app.use(error);
 
-
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server running at port ${PORT}`)
-})
+  console.log(`Server running at port ${PORT}`);
+  console.log(`Database is ${process.env.MONGODB_URI}`);
+});
 
 app.on('close', () => {
-  mongoose.connection.close()
-})
+  mongoose.connection.close();
+});
