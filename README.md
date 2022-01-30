@@ -11,3 +11,5 @@ Project consists of
 [Front and backend were deployed to Heroku](https://sulpro-weather-station.herokuapp.com/) and sensor was ran at my apartment.
 
 > **Note:** This was among my first React projects so the structure and writing style aren't all that great 😅
+
+![](frontpage.png)
